@@ -1,4 +1,38 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const JWT_SECRET = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
+
+app.post('/login', (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const { email, password } = decoded;
+
+    // Simula el éxito del inicio de sesión verificando si el correo electrónico y la contraseña están decodificados correctamente.
+    if (email && password) {
+      res.status(200).json({ email, password });
+      
+      res.redirect("http://localhost:3000/Lobby");
+    } else {
+      res.status(400).json({ error: 'Credenciales incorrectas' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+/*const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -16,12 +50,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 app.post('/login', async (req, res) => {
     try {
       const token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token);
   
       const { email, password } = decoded;
-  
-      const { user, error } = await supabase.auth.signIn({ email, password });
-  
+      console.log(email, password);
       if (error) {
         return res.status(400).json({ error: error.message });
       }
@@ -35,5 +67,5 @@ app.post('/login', async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+});*/
 

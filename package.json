@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon middleware.js",
+    "devStart": "node middleware.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,10 +14,8 @@
     "@supabase/gotrue-js": "^2.24.0",
     "@supabase/supabase-js": "^2.21.0",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
+    "jsonwebtoken": "^8.5.1"
   }
 }
