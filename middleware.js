@@ -5,6 +5,18 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 const JWT_SECRET = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
+const allowedOrigins = ['http://localhost:3000', 'https://example.com'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'La política CORS para este sitio no permite acceso desde el dominio solicitado.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 app.post('/login', (req, res) => {
   try {
