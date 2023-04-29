@@ -1,18 +1,10 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 const JWT_SECRET = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
 
-
-app.use(cors({
-  origin: '*', // Reemplaza '*' con el dominio de tu aplicación cliente si deseas restringir el acceso
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Lista de métodos HTTP permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'] // Lista de encabezados permitidos
-}));
 
 app.post('/login', (req, res) => {
   try {
