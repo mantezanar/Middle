@@ -5,17 +5,13 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 const JWT_SECRET = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
-const allowedOrigins = ['http://localhost:3000', 'https://example.com'];
+
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'La política CORS para este sitio no permite acceso desde el dominio solicitado.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
+  origin: '*', // Reemplaza '*' con el dominio de tu aplicación cliente si deseas restringir el acceso
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Lista de métodos HTTP permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'] // Lista de encabezados permitidos
 }));
 
 app.post('/login', (req, res) => {
@@ -26,10 +22,8 @@ app.post('/login', (req, res) => {
     const { email, password } = decoded;
 
     // Simula el éxito del inicio de sesión verificando si el correo electrónico y la contraseña están decodificados correctamente.
-    if (email && password) {
-      res.status(200).json({ email, password });
-      
-      res.redirect("http://localhost:3000/Lobby");
+    if (email && password) {      
+      res.redirect("https://academic-os-2-nb68q92w6-katilf.vercel.app/Lobby");
     } else {
       res.status(400).json({ error: 'Credenciales incorrectas' });
     }
