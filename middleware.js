@@ -5,18 +5,25 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 const JWT_SECRET = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
-const allowedOrigins = ['http://localhost:3000', 'https://example.com'];
+//const allowedOrigins = ['http://localhost:3000/', 'https://academic-os-2-nb68q92w6-katilf.vercel.app'];
 
-app.use(cors({
+app.use(cors(/*{
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'La política CORS para este sitio no permite acceso desde el dominio solicitado.';
-      return callback(new Error(msg), false);
+    console.log('Origen de la solicitud:', origin); // Agrega esta línea para ver el dominio de origen de la solicitud
+    if (!origin){
+      console.log('No hay origen, permitiendo acceso.');
+      return callback(null, true);
+    } 
+    if (allowedOrigins.includes(origin)) {
+      console.log('Origen permitido, permitiendo acceso.');
+      return callback(null, true);
     }
-    return callback(null, true);
+    
+    console.log('Origen no permitido, bloqueando acceso.');
+    const msg = 'La política CORS para este sitio no permite acceso desde el dominio solicitado.';
+    return callback(new Error(msg), false);
   }
-}));
+}*/));
 app.post('/login', (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];

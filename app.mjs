@@ -1,5 +1,5 @@
 //Configuracion de Supabase
-import { createClient } from "@supabase/supabase-js";
+/*import { createClient } from "@supabase/supabase-js";
 import express from "express";
 import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
