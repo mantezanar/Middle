@@ -12,16 +12,12 @@ app.post('/login', async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
-
-    const { email, password } = decoded;
-    const result = await supabase.auth.signInWithPassword({ email, password });
-    const { user, error } = result;
-    if (error) { 
+    console.log(decoded);
+    if (decoded == 'Credenciales no validas') {
       res.status(400).json({ error: 'Credenciales incorrectas' });
          
     } else {
-      console.log(result.data.session.user.aud);
-      res.json(result.data.session.user.aud);  
+      res.json(decoded);  
     }
   } catch (err) {
     res.status(500).json({ error: 'Error en el servidor' });
