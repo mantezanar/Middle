@@ -13,11 +13,13 @@ app.post('/login', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     console.log(decoded);
+    //const { email } = decoded
     if (decoded == 'Credenciales no validas') {
       res.status(400).json({ error: 'Credenciales incorrectas' });
          
     } else {
-      res.json(decoded);  
+      data = {aud: decoded.aud, email: decoded.email}
+      res.json(data);  
     }
   } catch (err) {
     res.status(500).json({ error: 'Error en el servidor' });
