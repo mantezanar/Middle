@@ -4,7 +4,6 @@ const cors = require('cors');
 const supabase = require("./utils/supabase");
 const app = express();
 app.use(express.json());
-const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
 const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A';
 const util = require('util');
 //
