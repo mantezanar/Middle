@@ -24,6 +24,14 @@ app.post('/login', async (req, res) => {
       data = {aud: decoded.aud, email: decoded.email}
       loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
+      let config ={
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${loginToken}`
+        }
+    }
+    
+    fetch('https://academic-os.vercel.app/Lobby', config);
     }
     
   } catch (err) {
