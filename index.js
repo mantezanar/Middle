@@ -4,9 +4,10 @@ const cors = require('cors');
 const supabase = require("./utils/supabase");
 const app = express();
 app.use(express.json());
+const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
 const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A';
 const util = require('util');
-//
+
 app.use(cors());
 app.post('/login', async (req, res) => {
   try {
@@ -17,8 +18,9 @@ app.post('/login', async (req, res) => {
       res.status(400).json({ error: 'Credenciales incorrectas' });
          
     } else {
-      data = {aud: decoded.aud, email: decoded.email}
-      res.json(data);  
+      data = {aud: decoded.aud}
+      const logintoken = jwt.sign(data, token1);
+      res.json(logintoken);  
     }
   } catch (err) {
     res.status(500).json({ error: 'Error en el servidor' });
