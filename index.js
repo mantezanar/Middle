@@ -4,8 +4,10 @@ const cors = require('cors');
 const supabase = require("./utils/supabase");
 const app = express();
 app.use(express.json());
+const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
 const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A';
 const util = require('util');
+const { log } = require('console');
 //
 app.use(cors());
 app.post('/login', async (req, res) => {
@@ -18,7 +20,8 @@ app.post('/login', async (req, res) => {
          
     } else {
       data = {aud: decoded.aud, email: decoded.email}
-      res.json(data);  
+      const loginToken = jwt.sign(data, token1);
+      res.json(loginToken);  
     }
   } catch (err) {
     res.status(500).json({ error: 'Error en el servidor' });
