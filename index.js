@@ -13,18 +13,28 @@ app.use(cors());
 app.post('/login', async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    
+    //Este es el token que viene del auth
+    const decoded = jwt.verify(token, JWT_SECRET);  
     if (decoded == 'Credenciales no validas') {
       res.status(400).json({ error: 'Credenciales incorrectas' });
-         
+        
     } else {
       data = {aud: decoded.aud, email: decoded.email}
       const loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
     }
+    
   } catch (err) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    //res.status(600).json({ error: 'Error en el servidor' });
+    const token = req.headers.authorization.split(' ')[1];
+    //Este es el token que se le manda al usuario autenticado
+    const decoded = jwt.verify(token, token1);
+    if(decoded == 'sesion actual'){
+      res.json(loginToken);  
+    }
+    /*data = { }
+    const sesionToken = jwt.sign(data, token1);*/
+    
   }
 });
 
