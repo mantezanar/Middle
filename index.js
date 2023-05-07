@@ -20,7 +20,7 @@ app.post('/login', async (req, res) => {
     } else {
       data = {aud: decoded.aud}
       const logintoken = jwt.sign(data, token1);
-      res.json(logintoken);  
+      res.json(data);  
     }
   } catch (err) {
     res.status(500).json({ error: 'Error en el servidor' });
