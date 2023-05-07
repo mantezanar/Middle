@@ -30,7 +30,7 @@ app.post('/login', async (req, res) => {
     //Este es el token que se le manda al usuario autenticado
     const decoded = jwt.verify(token, token1);
     if(decoded == 'sesion actual'){
-      res.json(loginToken);  
+      res.json('Sesion inciada');  
     } else {
       const no_sesion = 'No';
       res.json(no_sesion);
