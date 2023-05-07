@@ -20,7 +20,7 @@ app.post('/login', async (req, res) => {
         
     } else {
       data = {aud: decoded.aud, email: decoded.email}
-      const loginToken = jwt.sign(data, token1);
+      var loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
     }
     
@@ -30,14 +30,14 @@ app.post('/login', async (req, res) => {
     //Este es el token que se le manda al usuario autenticado
     const decoded = jwt.verify(token, token1);
     if(decoded == 'sesion actual'){
-      console.log(loginToken1);
-      if(!loginToken1){
+      console.log(loginToken);
+      if(!loginToken){
         const no_sesion = 'No';
         const sesionToken = jwt.sign(no_sesion, token1);
         res.json(sesionToken);
       }else {
         data = 'Sesion inciada';      
-      const sesionToken = jwt.sign(loginToken1, token1);
+      const sesionToken = jwt.sign(loginToken, token1);
       res.json(sesionToken); 
       }
     } 
