@@ -8,7 +8,6 @@ const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0Gu
 const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A';
 const util = require('util');
 const { log } = require('console');
-const loginToken = '';
 //
 app.use(cors());
 app.post('/login', async (req, res) => {
@@ -21,7 +20,7 @@ app.post('/login', async (req, res) => {
         
     } else {
       data = {aud: decoded.aud, email: decoded.email}
-      loginToken = jwt.sign(data, token1);
+      const loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
     }
     
