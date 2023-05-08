@@ -129,15 +129,8 @@ app.post('/registro', async (req, res) => {
      });
 
      result = "Registro completado"
-
-     if (error) {
-        const token = jwt.sign("Credenciales no validas", secretToken);
-        res.json(token);
-        return;
-     } else {
-        const respuesta = jwt.sign(result, secretToken);
-        res.json(respuesta);
-     }
+     res.json(result);
+     
   });
 
 })
