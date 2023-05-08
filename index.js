@@ -22,7 +22,7 @@ app.post('/', async (req, res) =>{
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }else {
-    jwt.verify(token, secretToken, async (err, decoded) => {
+    jwt.verify(token, token1, async (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }else {
