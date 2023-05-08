@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+import cookieParser from 'cookie-parser'
 const {connect} = require('./utils/supabase');
 
 
@@ -9,6 +10,7 @@ const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+
 var respuesta = ''
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser())
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
@@ -36,9 +38,10 @@ app.post('/', async (req, res) =>{
 
      if (error) {
         const token = jwt.sign("Credenciales no validas", secretToken);
-        res.json({token});
+        res.json(token);
         return;
      } else {
+        res.cookie('sesion', result);
         respuesta = jwt.sign(result.data.session.user.aud, secretToken);
         res.json(respuesta);
      }
@@ -50,6 +53,19 @@ app.post('/pedirsesion', async (req, res) =>{
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   const prueba1 = jwt.verify(token, secretToken);
+  res.json(respuesta)
+  respuesta = ''
+});
+
+app.post('/recursos', async (req, res) =>{
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  const sesion_recursos = jwt.verify(token, secretToken);
+  if (sesion_recursos == "aunteticado")
+  {
+
+  }
+  respuesta = sesion_recursos
   res.json(respuesta)
   respuesta = ''
 });
