@@ -116,20 +116,21 @@ app.post('/files/programacion', async (req, res) => {
 app.post('/registro', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
+  const supabase = await connect();
   jwt.verify(token, secretToken, async (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
     const correo = decoded.email;
     const contrasena = decoded.password;
-    const supabase = await connect();
-        let result = await supabase.auth.signUp({
+    
+    let result = await supabase.auth.signUp({
         email: correo,
         password: contrasena
      });
 
      result = "Registro completado"
-     res.json(decoded.email);
+     res.json(result);
      
   });
 
