@@ -40,7 +40,7 @@ app.post('/', async (req, res) =>{
         return;
      } else {
         respuesta = jwt.sign(result.data.session.user.aud, secretToken);
-        res.json({respuesta});
+        res.json(respuesta);
      }
   });
 });
