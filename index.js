@@ -39,12 +39,24 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } else {
-        const token = jwt.sign(result.data.session.user, secretToken);
-        res.json({token});
+        var respuesta = jwt.sign(result.data.session.user, secretToken);
+        res.json({respuesta});
      }
-
   });
 });
+
+
+app.post('/Lobby', async (req, res) =>{
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  const prueba1 = jwt.verify(token, secretToken);
+  res.json("probando:", respuesta)
+
+});
+
+
+
+
 
 app.listen(3000, () => {
   console.log('Servidor iniciado en el puerto 3000');
