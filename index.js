@@ -24,9 +24,7 @@ app.post('/', async (req, res) =>{
     if (peticion = "iniciar sesion")
     {
       res.json("datos")
-      authHeader = authHeader && authHeader.split(' ')[1];
-      const peticion2 = jwt.verify(peticion2, token1)
-      res.json("datos2")
+      
         
       
     }
