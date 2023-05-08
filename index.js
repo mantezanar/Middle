@@ -41,8 +41,6 @@ app.post('/', async (req, res) =>{
         return;
      } else {
         res.cookie('sesion', result, {sameSite: 'lax'})
-        const respuesta = jwt.sign(result.data.session.user.aud, secretToken);
-        res.json(respuesta);
      }
   });
 });
