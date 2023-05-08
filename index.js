@@ -40,14 +40,7 @@ app.post('/', async (req, res) =>{
      } 
       const tokenSalida = jwt.sign(result.data.session.user, token1);
       res.json({tokenSalida});
-      authHeader = req.headers.authorization;
-      const token_session = authHeader && authHeader.split(' ')[1];
-      decodedSesion = jwt.verify(token_session, token1)
-      if (decodedSesion = "sesion actual")
-      {
-        const sesionSalida = jwt.sign(result.data.session, token1);
-        res.json(sesionSalida)
-      }
+      
 
 
      
