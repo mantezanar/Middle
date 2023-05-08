@@ -20,13 +20,12 @@ app.post('/', async (req, res) =>{
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }
-  try {
-    const decoded = await jwt.verify(token, token1)
-    if (decoded = "iniciar sesion")
+    const peticion = jwt.verify(token, token1)
+    if (peticion = "iniciar sesion")
     {
       res.json("datos")
-      const rectoken = authHeader && authHeader.split(' ')[1];
-      const decoded2 = await jwt.verify(rectoken, token1)
+      authHeader = authHeader && authHeader.split(' ')[1];
+      const peticion2 = jwt.verify(peticion2, token1)
       res.json("datos2")
         
       
@@ -39,10 +38,6 @@ app.post('/', async (req, res) =>{
     {
 
     }
-  } catch (error) {
-    return res.status(403).json({ message: 'Token inválido' });
-  }
-    
 
 
      
