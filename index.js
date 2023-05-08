@@ -113,7 +113,34 @@ app.post('/files/programacion', async (req, res) => {
   }
 });
 
+app.post('/files/registro', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  jwt.verify(token, secretToken, async (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token inválido' });
+    }
+    const correo = decoded.email;
+    const contrasena = decoded.pass;
+    
+      result = await supabase.auth.signUp({
+        email: correo,
+        password: contrasena
+     });
 
+     let result = "Registro completado"
+
+     if (error) {
+        const token = jwt.sign("Credenciales no validas", secretToken);
+        res.json(token);
+        return;
+     } else {
+        const respuesta = jwt.sign(result, secretToken);
+        res.json(respuesta);
+     }
+  });
+
+})
 
 
 app.listen(3000, () => {
