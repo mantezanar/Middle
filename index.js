@@ -53,7 +53,9 @@ app.post('/listado', async (req, res) =>{
     const { data, error } = await supabase.storage.from('Ejemplo').list(`${algebra}/`);
     return data;
   }
-  res.json(solicitar())
+
+
+  res.json(solicitar)
 })
 
 
