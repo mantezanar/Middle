@@ -113,7 +113,7 @@ app.post('/files/programacion', async (req, res) => {
   }
 });
 
-app.post('/files/registro', async (req, res) => {
+app.post('/registro', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   jwt.verify(token, secretToken, async (err, decoded) => {
