@@ -54,8 +54,9 @@ app.post('/listado', async (req, res) =>{
     return data;
   }
 
+  const resultado = await solicitar()
 
-  res.json(solicitar)
+  res.json(resultado)
 })
 
 
