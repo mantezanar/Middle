@@ -16,7 +16,6 @@ app.use(cors());
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
-  let globalToken = null;
   const supabase = await connect();
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
@@ -43,7 +42,6 @@ app.post('/', async (req, res) =>{
      } else {
         const token = jwt.sign(result.data.session.user, JWT_SECRET);
         res.json({token});
-        globalToken = token;
      }
     }
   });
