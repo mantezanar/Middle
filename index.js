@@ -121,7 +121,7 @@ app.post('/registro', async (req, res) => {
       return res.status(403).json({ message: 'Token inválido' });
     }
     const correo = decoded.email;
-    const contrasena = decoded.pass;
+    const contrasena = decoded.password;
     const supabase = await connect();
         let result = await supabase.auth.signUp({
         email: correo,
