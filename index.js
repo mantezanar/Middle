@@ -15,7 +15,7 @@ app.use(cors());
 // Ruta protegida
 app.post('/', async (req, res) =>{
   const supabase = await connect();
-  const authHeader = req.headers.authorization;
+  let authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
@@ -38,8 +38,18 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } 
-        const token = jwt.sign(result.data.session.user, token1);
-        res.json({token});
+      const tokenSalida = jwt.sign(result.data.session.user, token1);
+      res.json({tokenSalida});
+      authHeader = req.headers.authorization;
+      const token_session = authHeader && authHeader.split(' ')[1];
+      decodedSesion = jwt.verify(token_session, token1)
+      if (decodedSesion = "sesion actual")
+      {
+        const sesionSalida = jwt.sign(result.data.session, token1);
+        res.json(sesionSalida)
+      }
+
+
      
     
   });
