@@ -54,7 +54,7 @@ app.post('/files', async (req, res) => {
 
   try {
     const supabase = await connect();
-    const { data: files, error } = await supabase.storage.from('Ejemplo').list('Algebra');
+    const { data: files, error } = await supabase.storage.from('Ejemplo').list();
 
     if (error) {
       throw error;
