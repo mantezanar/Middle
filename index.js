@@ -28,6 +28,9 @@ app.post('/', async (req, res) =>{
     {
       res.json("datos")
       const token = authHeader && authHeader.split(' ')[1];
+      jwt.verify(token, token1, async (err, decoded) => { 
+        res.json("datos2")
+      });
     }
     else if (decoded = "pedir sesion")
     {
