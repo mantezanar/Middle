@@ -1,9 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const {connect} = require('./utils/supabase');
-const react = require('react')
 
-const [datas, setDates] = react.useState([]);
+
 const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
@@ -48,32 +47,20 @@ app.post('/', async (req, res) =>{
 app.post('/files/algebra', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
-  
-
-
 
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }
 
   try {
-    react.useEffect( () => {
-      const fn = async () => {
-        const supabase = await connect();
-        const { data } = await supabase.storage.from('Ejemplo').list('Algebra');
-        const array = data;
-        setDates(array);
-      }
-    fn()
-
-    })
-    
+    const supabase = await connect();
+    const { data: files, error } = await supabase.storage.from('Ejemplo').list('Algebra');
 
     if (error) {
       throw error;
     }
 
-    res.json(datas);
+    res.json(files);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al listar los archivos' });
