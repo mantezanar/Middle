@@ -16,6 +16,7 @@ app.use(cors());
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
+  let globalToken = null;
   const supabase = await connect();
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
@@ -44,17 +45,13 @@ app.post('/', async (req, res) =>{
      } else {
         const token = jwt.sign(result.data.session.user, token2);
         res.json({token});
+        globalToken = token;
      }
 
   });
 });
 
-app.listen(3000, () => {
-  console.log('Servidor iniciado en el puerto 3000');
-});
 
-
-/* 
 app.post('/login', async (req, res) => {
   var loginToken;
   try {
@@ -68,14 +65,6 @@ app.post('/login', async (req, res) => {
       data = {aud: decoded.aud, email: decoded.email}
       loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
-      let config ={
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${loginToken}`
-        }
-    }
-    
-    fetch('https://academic-os.vercel.app/Lobby', config);
     }
     
   } catch (err) {
@@ -96,8 +85,11 @@ app.post('/login', async (req, res) => {
       }
     } 
     /*data = { }
-    const sesionToken = jwt.sign(data, token1);
+    const sesionToken = jwt.sign(data, token1);*/
     
   }
 });
-*/
+
+app.listen(3000, () => {
+  console.log('Servidor iniciado en el puerto 3000');
+});
