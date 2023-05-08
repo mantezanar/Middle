@@ -122,13 +122,13 @@ app.post('/files/registro', async (req, res) => {
     }
     const correo = decoded.email;
     const contrasena = decoded.pass;
-    
-      result = await supabase.auth.signUp({
+    const supabase = await connect();
+        let result = await supabase.auth.signUp({
         email: correo,
         password: contrasena
      });
 
-     let result = "Registro completado"
+     result = "Registro completado"
 
      if (error) {
         const token = jwt.sign("Credenciales no validas", secretToken);
