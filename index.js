@@ -27,6 +27,7 @@ app.post('/', async (req, res) =>{
     if (decoded = "iniciar sesion")
     {
       res.json("datos")
+      const token = authHeader && authHeader.split(' ')[1];
     }
     else if (decoded = "pedir sesion")
     {
