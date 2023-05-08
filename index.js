@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const {connect} = require('./utils/supabase');
+const cookieParser = require('cookie-parser')
 
 
 const jwt = require('jsonwebtoken');
@@ -39,6 +40,7 @@ app.post('/', async (req, res) =>{
         res.json(token);
         return;
      } else {
+        res.cookie('sesion', token, {sameSite: 'lax'}) 
         respuesta = jwt.sign(result.data.session.user.aud, secretToken);
         res.json(respuesta);
      }
