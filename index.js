@@ -24,30 +24,39 @@ app.post('/', async (req, res) =>{
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
-      console.log('Token decodificado:', decoded);
-    const correo = decoded.email;
-    const contrasena = decoded.pass;
-    
-    const result =  await supabase.auth.signInWithPassword({
-        email: correo,
-        password: contrasena
-     });
-    const { user, error } = result;
-     if (error) {
-        const token = jwt.sign("Credenciales no validas", JWT_SECRET);
-        res.json({token});
-        return;
-     } 
-      const tokenSalida = jwt.sign(result.data.session.user, token1);
-      res.json({tokenSalida});
+    if (decoded = "iniciar sesion")
+    {
+      res.json("datos")
+      const token = authHeader && authHeader.split(' ')[1];
+      jwt.verify(token, token1, async (err, decoded) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token inválido' });
+        }
+        const correo = decoded.email;
+        const contrasena = decoded.pass;
       
-      const token_session = req.headers.authorization.split(' ')[1];
-      decodedSesion = jwt.verify(token_session, token1)
-      if (decodedSesion = "sesion actual")
-      {
-        const sesionSalida = jwt.sign(result.data.session, token1);
-        res.json(sesionSalida)
-      }
+        const result =  await supabase.auth.signInWithPassword({
+          email: correo,
+          password: contrasena
+        });
+        const { user, error } = result;
+        if (error) {
+          const token = jwt.sign("Credenciales no validas", JWT_SECRET);
+          res.json({token});
+          return;
+        } 
+        const tokenSalida = jwt.sign(result.data.session.user, token1);
+        res.json({tokenSalida});
+      });
+    }
+    else if (decoded = "pedir sesion")
+    {
+
+    }
+    else if (decoded = "cambiar pagina")
+    {
+
+    }
 
 
      
