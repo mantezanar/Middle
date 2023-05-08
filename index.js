@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-import cookieParser from 'cookie-parser'
 const {connect} = require('./utils/supabase');
 
 
@@ -10,7 +9,6 @@ const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+
 var respuesta = ''
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser())
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
@@ -41,7 +39,6 @@ app.post('/', async (req, res) =>{
         res.json(token);
         return;
      } else {
-        res.cookie('sesion', result);
         respuesta = jwt.sign(result.data.session.user.aud, secretToken);
         res.json(respuesta);
      }
@@ -56,8 +53,6 @@ app.post('/pedirsesion', async (req, res) =>{
   res.json(respuesta)
   respuesta = ''
 });
-
-
 
 
 
