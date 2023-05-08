@@ -38,7 +38,7 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } 
-        const token = jwt.sign(result.data.session.user, JWT_SECRET);
+        const token = jwt.sign(result.data.session.user, token1);
         res.json({token});
      
     
@@ -46,7 +46,40 @@ app.post('/', async (req, res) =>{
   
 });
 
-
+app.post('/login', async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    //Este es el token que viene del auth
+    const decoded = jwt.verify(token, JWT_SECRET);  
+    if (decoded == 'Credenciales no validas') {
+      res.status(400).json({ error: 'Credenciales incorrectas' });
+    } else {
+      data = {aud: decoded.aud, email: decoded.email}
+      loginToken = jwt.sign(data, token1);
+      res.json(loginToken);  
+    }
+  } catch (err) {
+    //res.status(600).json({ error: 'Error en el servidor' });
+    const token = req.headers.authorization.split(' ')[1];
+    //Este es el token que se le manda al usuario autenticado
+    const decoded = jwt.verify(token, token1);
+    if(decoded == 'sesion actual'){
+      console.log(loginToken);
+      if(!loginToken){
+        const no_sesion = 'No';
+        const sesionToken = jwt.sign(no_sesion, token1);
+        res.json(sesionToken);
+      }else {
+        data = 'Sesion inciada';      
+      const sesionToken = jwt.sign(loginToken, token1);
+      res.json(sesionToken); 
+      }
+    } 
+    /*data = { }
+    const sesionToken = jwt.sign(data, token1);*/
+    
+  }
+});
 
 app.listen(3000, () => {
   console.log('Servidor iniciado en el puerto 3000');
