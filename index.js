@@ -39,7 +39,7 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } else {
-        const token = jwt.sign(result.data.session.user, secretToken;
+        const token = jwt.sign(result.data.session.user, secretToken);
         res.json({token});
      }
 
