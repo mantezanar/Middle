@@ -25,7 +25,7 @@ app.post('/', async (req, res) =>{
     {
       res.json("datos")
       const rectoken = authHeader && authHeader.split(' ')[1];
-      jwt.verify(rectoken, token1)
+      const decoded2 = await jwt.verify(rectoken, token1)
       res.json("datos2")
         
       
