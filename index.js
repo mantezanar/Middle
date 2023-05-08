@@ -129,7 +129,7 @@ app.post('/registro', async (req, res) => {
      });
 
      result = "Registro completado"
-     res.json(result);
+     res.json(decoded);
      
   });
 
