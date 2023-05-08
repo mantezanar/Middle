@@ -27,8 +27,23 @@ app.post('/', async (req, res) =>{
     if (decoded = "iniciar sesion")
     {
       res.json("datos")
-      const tokenrec = authHeader && authHeader.split(' ')[1];
+      const token = authHeader && authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, token1)
+      const contrasena = decoded.pass;
       
+        const result =  await supabase.auth.signInWithPassword({
+          email: correo,
+          password: contrasena
+        });
+        const { user, error } = result;
+        if (error) {
+          const token = jwt.sign("Credenciales no validas", JWT_SECRET);
+          res.json({token});
+          return;
+        } 
+        const tokenSalida = jwt.sign(result.data.session.user, token1);
+        res.json({tokenSalida});
+
     }
     else if (decoded = "pedir sesion")
     {
