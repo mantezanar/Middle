@@ -6,7 +6,7 @@ const {connect} = require('./utils/supabase');
 const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
-
+var respuesta = ''
 app.use(express.json());
 app.use(cors());
 
@@ -39,7 +39,7 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } else {
-        var respuesta = jwt.sign(result.data.session.user, secretToken);
+        respuesta = jwt.sign(result.data.session.user, secretToken);
         res.json({respuesta});
      }
   });
