@@ -45,6 +45,17 @@ app.post('/', async (req, res) =>{
 });
 
 
+app.post('/listado', async (req, res) =>{ 
+  const supabase = await connect();
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  const solicitar = async() =>{
+    const { data, error } = await supabase.storage.from('Ejemplo').list(`${algebra}/`);
+    return data;
+  }
+  res.json(solicitar)
+})
+
 
 
 
