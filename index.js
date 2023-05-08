@@ -3,7 +3,7 @@ const cors = require('cors');
 const {connect} = require('./utils/supabase');
 const react = require('react')
 
-
+const [datas, setDates] = react.useState([]);
 const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
@@ -48,7 +48,7 @@ app.post('/', async (req, res) =>{
 app.post('/files/algebra', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
-  const [datas, setDates] = react.useState([]);
+  
 
 
 
