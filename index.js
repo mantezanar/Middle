@@ -31,7 +31,7 @@ app.post('/', async (req, res) =>{
       const decoded = jwt.verify(token, token1)
       const contrasena = decoded.pass;
       
-        const result =  await supabase.auth.signInWithPassword({
+        const result = supabase.auth.signInWithPassword({
           email: correo,
           password: contrasena
         });
