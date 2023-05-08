@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const supabase = require("./utils/supabase");
+const {connect} = require("./utils/supabase");
 const app = express();
 app.use(express.json());
 //secretToken =
@@ -10,8 +10,6 @@ const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0Gu
 const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A'; 
 const util = require('util');
 const { log } = require('console');
-
-//
 app.use(cors());
 
 // Ruta protegida
