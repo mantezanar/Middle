@@ -1,45 +1,51 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const {connect} = require("./utils/supabase");
+const {connect} = require('./utils/supabase');
+
+
+const jwt = require('jsonwebtoken');
 const app = express();
+const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
+
 app.use(express.json());
-//secretToken =
-const token1 = 'M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==';
-//token2 = 
-const JWT_SECRET = 'DEE18F06FAA7F52C346E1569E13F5A85F501D844E5DD1D4DC7CA81A378A1C37A'; 
-const util = require('util');
-const { log } = require('console');
 app.use(cors());
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
   const supabase = await connect();
-  let authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }
-    jwt.verify(token, token1, async (err, decoded) => {
+
+   jwt.verify(token, secretToken, async (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
-    if (decoded === "iniciar sesion")
-    {
-      res.json("datos")
-      const token = authHeader && authHeader.split(' ')[1];
-      jwt.verify(token, token1, async (err, decoded) => { 
-        res.json("datos2")
-      });
-    }   
+
+    console.log('Token decodificado:', decoded);
+    const correo = decoded.email;
+    const contrasena = decoded.pass;
     
+    const result =  await supabase.auth.signInWithPassword({
+        email: correo,
+        password: contrasena
+     });
+     const { user, error } = result;
+
+     if (error) {
+        const token = jwt.sign("Credenciales no validas", secretToken);
+        res.json({token});
+        return;
+     } else {
+        const token = jwt.sign(result.data.session.user, secretToken;
+        res.json({token});
+     }
+
   });
-  
 });
-
-
 
 app.listen(3000, () => {
   console.log('Servidor iniciado en el puerto 3000');
 });
-
