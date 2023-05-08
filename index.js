@@ -57,18 +57,7 @@ app.post('/pedirsesion', async (req, res) =>{
   respuesta = ''
 });
 
-app.post('/recursos', async (req, res) =>{
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-  const sesion_recursos = jwt.verify(token, secretToken);
-  if (sesion_recursos == "aunteticado")
-  {
 
-  }
-  respuesta = sesion_recursos
-  res.json(respuesta)
-  respuesta = ''
-});
 
 
 
