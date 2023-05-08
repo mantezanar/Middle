@@ -54,6 +54,7 @@ app.post('/files', async (req, res) => {
 
   try {
     const supabase = await connect();
+    token = jwt.verify(token, secretToken)
     const { data: files, error } = await supabase.storage.from('Ejemplo').list(token);
 
     if (error) {
