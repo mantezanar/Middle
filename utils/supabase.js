@@ -5,8 +5,8 @@ const supabaseUrl1 = "https://tzscatlgcubfpvmcykrh.supabase.co";
 const supabaseAnonKey1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c2NhdGxnY3ViZnB2bWN5a3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODE2MDQ0NDksImV4cCI6MTk5NzE4MDQ0OX0.X4va-55G7_wn7BFWSCNOQQH6S6mUdT8aJGcsyy8MLhs";
 
 // Datos de conexión a la segunda base de datos
-const supabaseUrl2 = "https://tzscatlgcubfpvmcykrh.supabase.co";
-const supabaseAnonKey2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c2NhdGxnY3ViZnB2bWN5a3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODE2MDQ0NDksImV4cCI6MTk5NzE4MDQ0OX0.X4va-55G7_wn7BFWSCNOQQH6S6mUdT8aJGcsyy8MLhs";
+const supabaseUrl2 = "https://enabbfycejechtepmduc.supabase.co/";
+const supabaseAnonKey2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuYWJiZnljZWplY2h0ZXBtZHVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODMxNjYwMjEsImV4cCI6MTk5ODc0MjAyMX0.rsZ75jKyu7oAbe4HyD7777O4jbSo0wfVlvs2CWmevqo";
 
 async function connect() {
   try {
