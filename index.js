@@ -7,10 +7,9 @@ const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
-var respuesta = ''
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
@@ -41,20 +40,11 @@ app.post('/', async (req, res) =>{
         res.json(token);
         return;
      } else {
-        res.cookie('sesion', token, {sameSite: 'lax'}) 
-        respuesta = jwt.sign(result.data.session.user.aud, secretToken);
+        res.cookie('sesion', result, {sameSite: 'lax'})
+        const respuesta = jwt.sign(result.data.session.user.aud, secretToken);
         res.json(respuesta);
      }
   });
-});
-
-
-app.post('/pedirsesion', async (req, res) =>{
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-  const prueba1 = jwt.verify(token, secretToken);
-  res.json(respuesta)
-  respuesta = ''
 });
 
 
