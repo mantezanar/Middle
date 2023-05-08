@@ -39,20 +39,19 @@ app.post('/', async (req, res) =>{
         res.json({token});
         return;
      } else {
-        respuesta = jwt.sign(result.data.session.user, secretToken);
+        respuesta = jwt.sign(result.data.session.user.aud, secretToken);
         res.json({respuesta});
      }
   });
 });
 
 
-app.post('/Lobby', async (req, res) =>{
+app.post('/pedirsesion', async (req, res) =>{
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   const prueba1 = jwt.verify(token, secretToken);
   res.json(respuesta)
   respuesta = ''
-
 });
 
 
