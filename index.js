@@ -22,14 +22,12 @@ app.post('/', async (req, res) =>{
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
-  }
-
-   jwt.verify(token, secretToken, async (err, decoded) => {
+  }else {
+    jwt.verify(token, secretToken, async (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
-    }
-
-    console.log('Token decodificado:', decoded);
+    }else {
+      console.log('Token decodificado:', decoded);
     const correo = decoded.email;
     const contrasena = decoded.pass;
     
@@ -39,16 +37,17 @@ app.post('/', async (req, res) =>{
      });
     const { user, error } = result;
      if (error) {
-        const token = jwt.sign("Credenciales no validas", token2);
+        const token = jwt.sign("Credenciales no validas", JWT_SECRET);
         res.json({token});
         return;
      } else {
-        const token = jwt.sign(result.data.session.user, token2);
+        const token = jwt.sign(result.data.session.user, JWT_SECRET);
         res.json({token});
         globalToken = token;
      }
-
+    }
   });
+  }
 });
 
 
@@ -60,13 +59,11 @@ app.post('/login', async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);  
     if (decoded == 'Credenciales no validas') {
       res.status(400).json({ error: 'Credenciales incorrectas' });
-        
     } else {
       data = {aud: decoded.aud, email: decoded.email}
       loginToken = jwt.sign(data, token1);
       res.json(loginToken);  
     }
-    
   } catch (err) {
     //res.status(600).json({ error: 'Error en el servidor' });
     const token = req.headers.authorization.split(' ')[1];
