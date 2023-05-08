@@ -44,7 +44,7 @@ app.post('/', async (req, res) =>{
   });
 });
 
-app.post('/files', async (req, res) => {
+app.post('/files/algebra', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -55,6 +55,52 @@ app.post('/files', async (req, res) => {
   try {
     const supabase = await connect();
     const { data: files, error } = await supabase.storage.from('Ejemplo').list('Algebra');
+
+    if (error) {
+      throw error;
+    }
+
+    res.json(files);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al listar los archivos' });
+  }
+});
+
+app.post('/files/calculo', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
+  }
+
+  try {
+    const supabase = await connect();
+    const { data: files, error } = await supabase.storage.from('Ejemplo').list('Calculo');
+
+    if (error) {
+      throw error;
+    }
+
+    res.json(files);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al listar los archivos' });
+  }
+});
+
+app.post('/files/programacion', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
+  }
+
+  try {
+    const supabase = await connect();
+    const { data: files, error } = await supabase.storage.from('Ejemplo').list('Programacion');
 
     if (error) {
       throw error;
