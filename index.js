@@ -21,11 +21,11 @@ app.post('/', async (req, res) =>{
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
-  }else {
+  }
     jwt.verify(token, token1, async (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
-    }else {
+    }
       console.log('Token decodificado:', decoded);
     const correo = decoded.email;
     const contrasena = decoded.pass;
@@ -39,13 +39,13 @@ app.post('/', async (req, res) =>{
         const token = jwt.sign("Credenciales no validas", JWT_SECRET);
         res.json({token});
         return;
-     } else {
+     } 
         const token = jwt.sign(result.data.session.user, JWT_SECRET);
         res.json({token});
-     }
-    }
+     
+    
   });
-  }
+  
 });
 
 
