@@ -10,6 +10,7 @@ const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+
 var respuesta = ''
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser())
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
