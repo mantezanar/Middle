@@ -44,7 +44,7 @@ app.post('/', async (req, res) =>{
   });
 });
 
-app.get('/files', async (req, res) => {
+app.post('/files', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
