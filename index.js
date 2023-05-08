@@ -20,30 +20,11 @@ app.post('/', async (req, res) =>{
   if (!token) {
     return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }
-    jwt.verify(token, token1, async (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token inválido' });
-    }
-    if (decoded = "iniciar sesion")
+    peticion = jwt.verify(token, token1)
+    if (peticion = "iniciar sesion")
     {
       res.json("datos")
-      const token = authHeader && authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, token1)
-      const contrasena = decoded.pass;
       
-        const result = supabase.auth.signInWithPassword({
-          email: correo,
-          password: contrasena
-        });
-        const { user, error } = result;
-        if (error) {
-          const token = jwt.sign("Credenciales no validas", JWT_SECRET);
-          res.json({token});
-          return;
-        } 
-        const tokenSalida = jwt.sign(result.data.session.user, token1);
-        res.json({tokenSalida});
-
     }
     else if (decoded = "pedir sesion")
     {
@@ -57,7 +38,7 @@ app.post('/', async (req, res) =>{
 
      
     
-  });
+ 
   
 });
 
