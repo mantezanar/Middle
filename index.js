@@ -6,7 +6,7 @@ const app = express()
 app.use(cookieParser())
 
 app.get('/', (req, res) =>{
-  res.cookie('sesion')
+  res.cookie('sesion', 'my cookie')
   res.send('ho la')
 })
 
