@@ -50,7 +50,7 @@ app.post('/Lobby', async (req, res) =>{
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   const prueba1 = jwt.verify(token, secretToken);
-  res.json("probando:", respuesta)
+  res.json(respuesta)
 
 });
 
