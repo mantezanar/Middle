@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const {connect} = require('./utils/supabase');
-const cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser')
 
 
 const jwt = require('jsonwebtoken');
