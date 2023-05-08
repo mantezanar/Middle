@@ -27,7 +27,13 @@ app.post('/', async (req, res) =>{
     if (decoded = "iniciar sesion")
     {
       res.json("datos")
-     
+      const token = authHeader && authHeader.split(' ')[1];
+      jwt.verify(token, token1, async (err, decoded) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token inválido' });
+        }
+        res.json("datos1")
+      });
     }
     else if (decoded = "pedir sesion")
     {
