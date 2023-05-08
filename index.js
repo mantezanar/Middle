@@ -44,21 +44,28 @@ app.post('/', async (req, res) =>{
   });
 });
 
-
-app.post('/listado', async (req, res) =>{ 
-  const supabase = await connect();
+app.get('/files', async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
-  const solicitar = async() =>{
-    const { data, error } = await supabase.storage.from('Ejemplo').list(`${algebra}/`);
-    return data;
+
+  if (!token) {
+    return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
   }
 
-  const resultado = await solicitar
+  try {
+    const supabase = await connect();
+    const { data: files, error } = await supabase.storage.from('user-files').list(token);
 
-  res.json(resultado)
-})
+    if (error) {
+      throw error;
+    }
 
+    res.json(files);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al listar los archivos' });
+  }
+});
 
 
 
