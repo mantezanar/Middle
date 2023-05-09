@@ -128,9 +128,8 @@ app.post('/registro', async (req, res) => {
         email: correo,
         password: contrasena
      });
-
-     result = "Registro completado"
-     res.json(result);
+     const token = jwt.sign("Registro completado", secretToken);
+      res.json(token);
      
   });
 
