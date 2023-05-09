@@ -7,7 +7,14 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*', // Asegúrate de que este origen coincida con el de tu cliente
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 // Ruta protegida
 app.post('/', async (req, res) =>{
