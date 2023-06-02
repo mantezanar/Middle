@@ -1,12 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
 
 // Datos de conexión a la primera base de datos
-const supabaseUrl1 = "https://tzscatlgcubfpvmcykrh.supabase.co";
-const supabaseAnonKey1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c2NhdGxnY3ViZnB2bWN5a3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODE2MDQ0NDksImV4cCI6MTk5NzE4MDQ0OX0.X4va-55G7_wn7BFWSCNOQQH6S6mUdT8aJGcsyy8MLhs";
+const supabaseUrl1 = "https://zqnfodulhltkthicgmfk.supabase.co/";
+const supabaseAnonKey1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbmZvZHVsaGx0a3RoaWNnbWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU0MTM1NzksImV4cCI6MjAwMDk4OTU3OX0.J2sxmhFk8mbMNsAbCamZ5VWgf45vMy15B20gusnQZCY";
 
 // Datos de conexión a la segunda base de datos
-const supabaseUrl2 = "https://enabbfycejechtepmduc.supabase.co/";
-const supabaseAnonKey2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuYWJiZnljZWplY2h0ZXBtZHVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODMxNjYwMjEsImV4cCI6MTk5ODc0MjAyMX0.rsZ75jKyu7oAbe4HyD7777O4jbSo0wfVlvs2CWmevqo";
+const supabaseUrl2 = "https://ujdiwyiomnpqiilwykcl.supabase.co";
+const supabaseAnonKey2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqZGl3eWlvbW5wcWlpbHd5a2NsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ5Mzg1NDUsImV4cCI6MjAwMDUxNDU0NX0.jcC0vYoQn3By9ZeBpao9wTnHHS7oYy5A9sUBfUkkhGM";
 
 async function connect() {
   try {
@@ -24,7 +24,7 @@ async function connect() {
 
   try {
     const supabase2 = createClient(supabaseUrl2, supabaseAnonKey2);
-    const { data, error2 } = await supabase2.from('status').select();
+    const { data, error2 } = await supabase2.from('etiqueta').select();
     console.log('error: %o',error2)
     console.log('data: %o',data)
     if (data!=null) {
