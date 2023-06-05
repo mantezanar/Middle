@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const { connect } = require('./utils/supabase');
 
-
 const jwt = require('jsonwebtoken');
 const app = express();
 const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
@@ -201,8 +200,8 @@ app.put('/etiquetas/:id', async (req, res) => {
 async function deleteEtiqueta(id) {
   try {
     // Obtener la etiqueta por su ID
+    
     const supabase = await connect();
-
     // Obtener los archivos relacionados a la etiqueta
     const { data: archivoData, error: archivoError } = await supabase
       .from('archivo')
