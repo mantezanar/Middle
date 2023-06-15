@@ -1,12 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
 
 // Datos de conexión a la primera base de datos
-const supabaseUrl1 = "https://zqnfodulhltkthicgmfk.supabase.co/";
-const supabaseAnonKey1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbmZvZHVsaGx0a3RoaWNnbWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU0MTM1NzksImV4cCI6MjAwMDk4OTU3OX0.J2sxmhFk8mbMNsAbCamZ5VWgf45vMy15B20gusnQZCY";
+const supabaseUrl1 = process.env.supabaseUrl1;
+const supabaseAnonKey1 = process.env.supabaseKey1;
 
 // Datos de conexión a la segunda base de datos
-const supabaseUrl2 = "https://ujdiwyiomnpqiilwykcl.supabase.co";
-const supabaseAnonKey2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqZGl3eWlvbW5wcWlpbHd5a2NsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ5Mzg1NDUsImV4cCI6MjAwMDUxNDU0NX0.jcC0vYoQn3By9ZeBpao9wTnHHS7oYy5A9sUBfUkkhGM";
+const supabaseUrl2 = process.env.supabaseUrl2;
+const supabaseAnonKey2 = process.env.supabaseKey2;
 
 async function connect() {
   try {

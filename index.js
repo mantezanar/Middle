@@ -1,10 +1,13 @@
+//npm install dotenv
+require("dotenv").config(); // Cargar variables de entorno desde un archivo .env
+
 const express = require('express');
 const cors = require('cors');
 const { connect } = require('./utils/supabase');
 
 const jwt = require('jsonwebtoken');
 const app = express();
-const secretToken = "M+Yidu6bWMk9GKkJopL0Sk+ri/RRcBFTF5DmxvbBZaJj+ouXBWzNeSb0qf+rG0GuLXqeD34vZ0RKH2LnS+0INw==";
+const secretToken = process.env.secretToken;
 app.use(cors({
   origin: '*', // Asegúrate de que este origen coincida con el de tu cliente
   credentials: true,
@@ -14,6 +17,33 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 app.use(express.json());
+
+async function seaching_id(email, result, res) {
+  try {
+    // Buscar el id del usuario mediante el email
+    const supabase = await connect();
+    const { data, error } = await supabase
+      .from('usuario')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (error) {
+      // Error al consultar la información del usuario
+      console.error('Error al consultar la información del usuario:', error.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    const resultado = {
+      result: result,
+      id: data.id
+    }
+    const token = jwt.sign(resultado, secretToken);
+    console.log("Ingresado correctamente")
+    res.json(token);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
 // Ruta protegida
 app.post('/', async (req, res) => {
@@ -40,37 +70,14 @@ app.post('/', async (req, res) => {
     const { user, error } = result;
 
     if (error) {
+      console.log(error.message);
       const token = jwt.sign("Credenciales no validas", secretToken);
-      res.json(token);
-      return;
+      return res.json(token);
     } else {
-      const respuesta = jwt.sign(result, secretToken);
-      res.json(respuesta);
+      //Se busca el id del email de la tabla usuaraiopara devolverlo al cliente
+      await seaching_id(correo, result, res)
     }
   });
-});
-
-app.post('/files/algebra', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'No se proporcionó el token de autorización' });
-  }
-
-  try {
-    const supabase = await connect();
-    const { data: files, error } = await supabase.storage.from('Ejemplo').list('Algebra');
-
-    if (error) {
-      throw error;
-    }
-
-    res.json(files);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al listar los archivos' });
-  }
 });
 
 app.post('/registro', async (req, res) => {
@@ -84,13 +91,26 @@ app.post('/registro', async (req, res) => {
     const correo = decoded.email;
     const contrasena = decoded.password;
 
+    //Para guardar los datos del usuario en la tabla usuario,guardo el email y por defecto el rol de Alumno
+    const role = 'Alumno'
+
+    //Mapearlo
+    const { data, error } = await supabase
+      .from('usuario')
+      .insert({ email: correo, role });
+    if (error) {
+      console.log(error.message);
+      return res.status(500).json({ error: 'Error creating usuario' });
+    }
+
     let result = await supabase.auth.signUp({
       email: correo,
       password: contrasena
     });
+
+    console.log("Registrado Correctamente")
     const token = jwt.sign("Registro completado", secretToken);
     res.json(token);
-
   });
 
 })
@@ -100,7 +120,6 @@ app.post('/registro', async (req, res) => {
   luego npm install azure-storage multer express
   finalmente npm install cors
   para instalar supabase npm install @supabase/supabase-js
-  npm install @azure/storage-blob
   para el token  npm install jsonwebtoken
   para ejecutar node server.js
 */
@@ -114,7 +133,6 @@ app.post('/registro', async (req, res) => {
 // Importar la función connect desde './utils/supabase'
 //azure-storage para interactuar con Azure Blob Storage.
 const azure = require('azure-storage');
-const { BlobServiceClient } = require('@azure/storage-blob');
 //Utilizo el paquete multer para manejar la carga de archivos
 const multer = require('multer');
 //Para generar nombre unicos para los archivos
@@ -130,24 +148,22 @@ const mime = require('mime-types');
 const upload = multer({ dest: 'uploads/' });
 //nombre de la cuenta de almacenamiento y clave(no Cadena de conexión)+
 //se consiguen en Claves de acceso
-const blobService = azure.createBlobService('academicos', 'q0muG31l4muGSQcxB8V9crxcn3oQRHhFl5jYL0B5QB1tlAb6zinLORGrkmtjz9q+C71WBnHPTiHI+AStto8JZg==');
+const AccountName = process.env.AccountName;
+const AccountKey = process.env.AccountKey;
 //nombre del contenedor en Almacenamiento de datos-> contenedores
-const containerName = 'imagenes';
-const connectionString = 'DefaultEndpointsProtocol=https;AccountName=academicos;AccountKey=q0muG31l4muGSQcxB8V9crxcn3oQRHhFl5jYL0B5QB1tlAb6zinLORGrkmtjz9q+C71WBnHPTiHI+AStto8JZg==;EndpointSuffix=core.windows.net'
+const containerName = process.env.containerName;
 
-// Crear una instancia del cliente de Blob Service
-const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
-const containerClient = blobServiceClient.getContainerClient(containerName);
-
+const blobService = azure.createBlobService(AccountName, AccountKey);
 
 //-------------------------------Rutas para el CRUD con la tabla "etiqueta"-------------------------------
+
 // Obtener registros
 app.get('/etiquetas', async (req, res) => {
   try {
     const supabase = await connect();
     const { data, error } = await supabase.from('etiqueta').select('*');
     if (error) {
-      throw new Error('Error fetching etiqueta');
+      return res.status(500).json({ error: 'Error fetching etiqueta' });
     }
     res.json(data);
   } catch (error) {
@@ -159,14 +175,15 @@ app.get('/etiquetas', async (req, res) => {
 // Crear un registro
 app.post('/etiquetas', async (req, res) => {
   try {
+    //Se añadi al autor del la etiqueta
     const supabase = await connect();
-    const { etiqueta, description } = req.body;
+    const { etiqueta, description, categoria, usuario_id } = req.body;
 
     const { data, error } = await supabase
       .from('etiqueta')
-      .insert({ etiqueta, description });
+      .insert({ etiqueta, description, usuario_id, categoria });
     if (error) {
-      throw new Error('Error creating etiqueta');
+      return res.status(500).json({ error: 'Error creating etiqueta' });
     }
     res.json({ message: 'Registro creado exitosamente' });
   } catch (error) {
@@ -179,15 +196,15 @@ app.post('/etiquetas', async (req, res) => {
 app.put('/etiquetas/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { etiqueta, description } = req.body;
+    const { etiqueta, description, categoria } = req.body;
 
     const supabase = await connect();
     const { data, error } = await supabase
       .from('etiqueta')
-      .update({ etiqueta, description })
+      .update({ etiqueta, description, categoria })
       .eq('id', id);
     if (error) {
-      throw new Error('Error updating etiqueta');
+      return res.status(500).json({ error: 'Error updating etiqueta' });
     }
     res.json({ message: 'Registro actualizado exitosamente' });
   } catch (error) {
@@ -197,10 +214,10 @@ app.put('/etiquetas/:id', async (req, res) => {
 });
 
 // Funcion para eliminar una etiqueta (cascada) y que a su vez se eliminen los archivos relacionados de Azure
-async function deleteEtiqueta(id) {
+async function deleteEtiqueta(id, res) {
   try {
     // Obtener la etiqueta por su ID
-    
+
     const supabase = await connect();
     // Obtener los archivos relacionados a la etiqueta
     const { data: archivoData, error: archivoError } = await supabase
@@ -209,8 +226,7 @@ async function deleteEtiqueta(id) {
       .eq('etiqueta_id', id);
 
     if (archivoError) {
-      console.error(archivoError);
-      return;
+      return res.status(500).json({ archivoError: 'Error seaching etiqueta' });
     }
 
     const archivos = archivoData;
@@ -219,14 +235,20 @@ async function deleteEtiqueta(id) {
     archivos.forEach(async (archivo) => {
       const blobName = archivo.url_azura.split('/').pop(); // Obtener el nombre del archivo del URL
 
-      blobService.deleteBlobIfExists(containerName, blobName, (error, result) => {
-        if (error) {
-          console.error('Error deleting blob:', error);
-          return;
-        } else {
-          console.log('Blob deleted successfully:', blobName);
-        }
+      //Se utiliza promesa para utilizar resolve y reject para controlar el flujo y el manejo de errores.
+      //Al momento de un error se ejecutara el catch correspondiente 
+      await new Promise((resolve, reject) => {
+        blobService.deleteBlobIfExists(containerName, blobName, (error, result) => {
+          if (error) {
+            //Pasa el catch externo
+            reject(error);
+          } else {
+            //Si funciona seguira el codigo normalmente
+            resolve();
+          }
+        });
       });
+
     });
 
     // Eliminar la etiqueta y los archivos relacionados en la base de datos
@@ -237,25 +259,20 @@ async function deleteEtiqueta(id) {
 
     if (error) {
       console.error('Error deleting etiqueta:', error.message);
-      return;
+      return res.status(500).json({ archivoError: 'Error deleting etiqueta' });
     }
     console.log('Etiqueta and related archivos deleted successfully');
-  } catch (error) {
-    console.error('Error durante la eliminacion de etiqueta:', error.message);
-    throw error;
-  }
-}
-
-// Eliminar una etiqueta
-app.delete('/etiquetas/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await deleteEtiqueta(id);
     res.json({ message: 'Etiqueta y archivos relacionados eliminados' });
   } catch (error) {
     console.error('Error durante la eliminacion de etiqueta:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+}
+
+// Eliminar una etiqueta
+app.delete('/etiquetas/:id', async (req, res) => {
+  const { id } = req.params;
+  await deleteEtiqueta(id,res);
 });
 
 
@@ -272,7 +289,7 @@ app.get('/archivo', async (req, res) => {
       .eq('etiqueta_id', id);
 
     if (error) {
-      throw new Error('Error fetching archivos from Supabase');
+      return res.status(500).json({ error: 'Error fetching archivos' });
     }
 
     res.json(data);
@@ -291,7 +308,7 @@ async function createArchivo(req, res) {
     const originalFileName = file.originalname;
     const blobName = uuid.v4(); // Genera un nombre único para el archivo en Azure Blob Storage
 
-    const email = req.body.email;
+    const usuario_id = req.body.usuario_id;
     const etiqueta_id = req.body.etiqueta_id;
 
     const mimeType = mime.lookup(originalFileName); // Obtener el tipo MIME basado en la extensión del archivo
@@ -301,12 +318,23 @@ async function createArchivo(req, res) {
         contentType: mimeType // Establecer el tipo MIME obtenido
       }
     };
-    blobService.createBlockBlobFromLocalFile(containerName, blobName, filePath, options, (error) => {
-      if (error) {
-        console.log('Error uploading file:', error);
-        res.status(500).send('Error uploading file');
-      }
+
+    //Al ser un callback, aun con el error el codigo se seguira ejecutando, con Promise evito que pase esto
+    //Se utiliza promesa para utilizar resolve y reject para controlar el flujo y el manejo de errores.
+    //Al momento de un error se ejecutara el catch correspondiente 
+    await new Promise((resolve, reject) => {
+      blobService.createBlockBlobFromLocalFile(containerName, blobName, filePath, options, (error) => {
+        if (error) {
+          console.log('Error uploading file:', error);
+          //Pasa el catch externo
+          reject(error);
+        } else {
+          //Si funciona seguira el codigo normalmente
+          resolve();
+        }
+      });
     });
+
 
     const url_azura = blobService.getUrl(containerName, blobName);
     const supabase = await connect();
@@ -314,13 +342,14 @@ async function createArchivo(req, res) {
     const nombre_archivo = req.body.nombre_archivo || originalFileName;
     const { data, error } = await supabase
       .from('archivo')
-      .insert([{ email, etiqueta_id, url_azura, formato: mimeType, nombre_archivo }]);
+      .insert([{ usuario_id, etiqueta_id, url_azura, formato: mimeType, nombre_archivo }]);
 
     if (error) {
       console.error('Error creating archivo:', error.message);
-      return;
+      return res.status(500).json({ error: 'Error creating archivo' });
     }
     console.log('Archivo creado exitosamente');
+    res.json({ message: 'Registro creado exitosamente' });
 
   } catch (error) {
     console.error('Error creating archivo:', error.message);
@@ -330,13 +359,7 @@ async function createArchivo(req, res) {
 
 // Crear un registro
 app.post('/archivo', upload.single('file'), async (req, res) => {
-  try {
-    await createArchivo(req, res);
-    res.json({ message: 'Registro creado exitosamente' });
-  } catch (error) {
-    console.error('Error creating archivo:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  await createArchivo(req, res);
 });
 
 // Función para actualizar un archivo en Azure Blob Storage y actualizar el registro
@@ -363,31 +386,38 @@ async function updateArchivo(id, req, res) {
       .single();
 
     if (archivoError) {
-      console.error(archivoError);
-      return;
+      return res.status(500).json({ error: 'Error seaching archivo' });
     }
     const blobUrl = archivoData.url_azura;
     const blobName = blobUrl.substring(blobUrl.lastIndexOf('/') + 1);
 
-    blobService.createBlockBlobFromLocalFile(containerName, blobName, filePath, options, (error) => {
-      if (error) {
-        console.log('Error uploading file:', error);
-        res.status(500).send('Error uploading file');
-      }
+    //Se utiliza promesa para utilizar resolve y reject para controlar el flujo y el manejo de errores.
+    //Al momento de un error se ejecutara el catch correspondiente 
+    await new Promise((resolve, reject) => {
+      blobService.createBlockBlobFromLocalFile(containerName, blobName, filePath, options, (error) => {
+        if (error) {
+          console.log('Error uploading file:', error);
+          //Pasa el catch externo
+          reject(error);
+        } else {
+          //Si funciona seguira el codigo normalmente
+          resolve();
+        }
+      });
     });
 
     const url_azura = blobService.getUrl(containerName, blobName);
     const nombre_archivo = req.body.nombre_archivo || originalFileName;
     const { data, error } = await supabase
       .from('archivo')
-      .update({ url_azura, nombre_archivo})
+      .update({ url_azura, nombre_archivo, formato: mimeType })
       .eq('id', id);
 
     if (error) {
-      console.error('Error updating archivo:', error.message);
-      return;
+      return res.status(500).json({ error: 'Error updating archivo' });
     }
     console.log('Archivo actualizado exitosamente');
+    res.json({ message: 'Registro actualizado exitosamente' });
   } catch (error) {
     console.error('Error updating archivo:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -396,14 +426,8 @@ async function updateArchivo(id, req, res) {
 
 // Actualizar un registro
 app.put('/archivo/:id', upload.single('file'), async (req, res) => {
-  try {
-    const { id } = req.params;
-    await updateArchivo(id, req, res);
-    res.json({ message: 'Registro actualizado exitosamente' });
-  } catch (error) {
-    console.error('Error updating archivo:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  const { id } = req.params;
+  await updateArchivo(id, req, res);
 });
 
 // Función para eliminar un archivo de Azure Blob Storage y eliminar el registro
@@ -418,14 +442,28 @@ async function deleteArchivo(id, res) {
       .single();
 
     if (archivoError) {
-      console.error(archivoError);
-      return;
+      return res.status(500).json({ error: 'Error seaching archivo' });
     }
 
     const blobUrl = archivoData.url_azura;
     const blobName = blobUrl.substring(blobUrl.lastIndexOf('/') + 1);
 
-    await containerClient.deleteBlob(blobName); // Eliminar el archivo en Azure Blob Storage
+    //Se utiliza promesa para utilizar resolve y reject para controlar el flujo y el manejo de errores.
+    //Al momento de un error se ejecutara el catch correspondiente 
+    await new Promise((resolve, reject) => {
+      blobService.deleteBlobIfExists(containerName, blobName, (error, result) => {
+        if (error) {
+          console.error('Error deleting blob:', error);
+          //Pasa el catch externo
+          reject(error);
+        } else {
+          //Si funciona seguira el codigo normalmente
+          resolve();
+        }
+      }); // Eliminar el archivo en Azure Blob Storage
+    });
+
+    console.log('Blob deleted successfully:', blobName);
 
     const { data, error } = await supabase
       .from('archivo')
@@ -434,9 +472,10 @@ async function deleteArchivo(id, res) {
 
     if (error) {
       console.error('Error deleting archivo:', error.message);
-      return;
+      return res.status(500).json({ error: 'Error deleting archivo' });
     }
     console.log('Archivo eliminado exitosamente');
+    res.json({ message: 'Archivo eliminado' });
   } catch (error) {
     console.error('Error deleting archivo:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -445,15 +484,254 @@ async function deleteArchivo(id, res) {
 
 // Eliminar un registro
 app.delete('/archivo/:id', async (req, res) => {
+  const { id } = req.params;
+  await deleteArchivo(id, res);
+});
+
+//-------------------------------Rutas para las Funciones de roles-------------------------------
+
+//Verificar que el usuario es administrador
+app.post("/admin", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  jwt.verify(token, secretToken, async (err, decoded) => {
+
+    if (err) {
+      // Devolver un mensaje de error si el token es inválido
+      return res.status(403).json({ message: 'Token inválido' });
+    }
+
+    try {
+      // Verificar si el usuario es administrador
+      const supabase = await connect();
+      const { data, error } = await supabase
+        .from('usuario')
+        .select('*')
+        .eq('id', decoded)
+        .single();
+
+      if (error) {
+        // Error al consultar la información del usuario
+        console.error('Error al consultar la información del usuario:', error.message);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      const userRole = data.role;
+
+      if (userRole === 'Administrador') {
+        // El usuario es administrador, realizar la acción de envío de correo
+        // Aquí puedes agregar la lógica para enviar el correo electrónico
+        res.json({ message: 'Correo enviado correctamente.' });
+      } else {
+        // El usuario no es administrador, devuelve una respuesta de acceso denegado
+        res.status(403).json({ message: 'Acceso denegado.' });
+      }
+    } catch (error) {
+      console.error('Error de búsqueda:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+});
+//Buscar el Rol del Usuario
+app.get("/buscar", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  jwt.verify(token, secretToken, async (err, decoded) => {
+
+    if (err) {
+      // Devolver un mensaje de error si el token es inválido
+      return res.status(403).json({ message: 'Token inválido' });
+    }
+
+    try {
+      // Verificar si el usuario es administrador
+      const supabase = await connect();
+      const { data, error } = await supabase
+        .from('usuario')
+        .select('*')
+        .eq('id', decoded)
+        .single();
+
+      if (error) {
+        // Error al consultar la información del usuario
+        console.error('Error al consultar la información del usuario:', error.message);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      const token = jwt.sign(data.role, secretToken);
+      res.json(token);
+
+    } catch (error) {
+      console.error('Error de búsqueda:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+});
+//Obtener los Datos del usuario
+app.get('/usuario', async (req, res) => {
   try {
-    const { id } = req.params;
-    await deleteArchivo(id, res);
-    res.json({ message: 'Archivo eliminado' });
+    const supabase = await connect();
+    const { data, error } = await supabase.from('usuario').select('*');
+    if (error) {
+      return res.status(500).json({ error: 'Error seaching usuario' });
+    }
+    if (!data) {
+      return res.status(404).json({ message: 'No se encontraron usuarios' });
+    }
+    res.json(data);
   } catch (error) {
-    console.error('Error durante la eliminación del archivo:', error.message);
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+});
+//Cambiar el rol de un Usuario determinado
+app.put('/usuario/:id', async (req, res) => {
+  const { id } = req.params;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  jwt.verify(token, secretToken, async (err, decoded) => {
+
+    if (err) {
+      // Devolver un mensaje de error si el token es inválido
+      return res.status(403).json({ message: 'Token inválido' });
+    }
+    const role = decoded;
+    try {
+      //Verificar que el usuario existe
+      const supabase = await connect();
+      const { data: usuarioExistente, error: errorusuarioExistente } = await supabase
+        .from('usuario')
+        .select('id')
+        .eq('id', id);
+
+      if (errorusuarioExistente) {
+        return res.status(500).json({ error: 'Error seaching usuario' });
+      }
+
+      if (usuarioExistente.length === 0) {
+        console.log("Usuario no encontrado")
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      //Cambiar rol de usuario
+      const { data, error } = await supabase
+        .from('usuario')
+        .update({ role })
+        .eq('id', id);
+
+      if (error) {
+        return res.status(500).json({ error: 'Error update usuario' });
+      }
+      res.json({ message: 'Rol del usuario actualizado exitosamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al actualizar el rol del usuario' });
+    }
+  });
+});
+
+//-------------------------------Funciones Extras-------------------------------
+
+//Filtrar elementos de etiqueta mediante etiqueta y categoria
+app.get('/filtrar', async (req, res) => {
+  const etiqueta = req.query.etiqueta;
+  const categoria = req.query.categoria;
+  try {
+    const supabase = await connect();
+    let query = supabase.from('etiqueta').select('*');
+
+    if (etiqueta && categoria) {
+      query = query.ilike('etiqueta', `%${etiqueta}%`).ilike('categoria', `%${categoria}%`);
+    } else if (etiqueta) {
+      query = query.ilike('etiqueta', `%${etiqueta}%`);
+    } else if (categoria) {
+      query = query.ilike('categoria', `%${categoria}%`);
+    }
+
+    // Realizar la consulta a la tabla "etiqueta"
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      res.status(500).send('Error en el servidor');
+    } else {
+      res.json(data); // Enviar los resultados como respuesta (puedes ajustarlo según tus necesidades)
+    }
+  } catch (error) {
+    console.error('Error al ejecutar la consulta:', error);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
+//Filtrar elementos de archivo mediante nombre del archivo y formato
+app.get('/filtrar_archivo', async (req, res) => {
+  const nombre_archivo = req.query.nombre;
+  const formato = req.query.formato;
+  const id = req.query.id;
+
+  try {
+    const supabase = await connect();
+    let query = supabase.from('archivo').select('*').eq('etiqueta_id', id);;
+
+    if (nombre_archivo && formato) {
+      query = query.ilike('nombre_archivo', `%${nombre_archivo}%`).ilike('formato', `%${formato}%`);
+    } else if (nombre_archivo) {
+      query = query.ilike('nombre_archivo', `%${nombre_archivo}%`);
+    } else if (formato) {
+      query = query.ilike('formato', `%${formato}%`);
+    }
+
+    // Realizar la consulta a la tabla "nombre_archivo"
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      res.status(500).send('Error en el servidor');
+    } else {
+      res.json(data); // Enviar los resultados como respuesta (puedes ajustarlo según tus necesidades)
+    }
+  } catch (error) {
+    console.error('Error al ejecutar la consulta:', error);
+    res.status(500).send('Error en el servidor');
+  }
+});
+// Obtener categorias
+app.get('/categoria', async (req, res) => {
+  try {
+    const supabase = await connect();
+    const { data, error } = await supabase.from('etiqueta').select('categoria');
+    if (error) {
+      return res.status(500).json({ error: 'Error fetching categoria' });
+    }
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching categoria:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+//Obtener Formatos
+app.get('/formato', async (req, res) => {
+  try {
+    const { id } = req.query;
+    const supabase = await connect();
+    const { data, error } = await supabase
+      .from('archivo')
+      .select('formato')
+      .eq('etiqueta_id', id);
+
+    if (error) {
+      return res.status(500).json({ error: 'Error fetching formato' });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching formato:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.listen(4041, () => {
   console.log('Servidor iniciado en el puerto 4041');

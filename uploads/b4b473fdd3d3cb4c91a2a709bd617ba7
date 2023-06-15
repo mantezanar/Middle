@@ -1,0 +1,7 @@
+1) instalar nodejs
+2)En cmd poner npm install -g @ionic/cli
+3)despues npm install -g @angular/cli
+4)Crear Carpeta para la app y en ese cmd poner ionic start newApp sidemenu ,lo ultimo depende del usuario con que quiere iniciar
+5)Escojer el framework react, angular o nuv, luego esperar que instale(tarda)
+6)Poner no
+7)Para ejecutar la app en localhost poner ionic serve
